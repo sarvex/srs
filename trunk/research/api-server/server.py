@@ -120,9 +120,9 @@ class RESTClients(object):
     def __on_connect(self, req):
         code = Error.success
 
-        trace("srs %s: client id=%s, ip=%s, vhost=%s, app=%s, tcUrl=%s, pageUrl=%s"%(
-            req["action"], req["client_id"], req["ip"], req["vhost"], req["app"], req["tcUrl"], req["pageUrl"]
-        ))
+        trace(
+            f'srs {req["action"]}: client id={req["client_id"]}, ip={req["ip"]}, vhost={req["vhost"]}, app={req["app"]}, tcUrl={req["tcUrl"]}, pageUrl={req["pageUrl"]}'
+        )
 
         # TODO: process the on_connect event
 
@@ -131,9 +131,9 @@ class RESTClients(object):
     def __on_close(self, req):
         code = Error.success
 
-        trace("srs %s: client id=%s, ip=%s, vhost=%s, app=%s, send_bytes=%s, recv_bytes=%s"%(
-            req["action"], req["client_id"], req["ip"], req["vhost"], req["app"], req["send_bytes"], req["recv_bytes"]
-        ))
+        trace(
+            f'srs {req["action"]}: client id={req["client_id"]}, ip={req["ip"]}, vhost={req["vhost"]}, app={req["app"]}, send_bytes={req["send_bytes"]}, recv_bytes={req["recv_bytes"]}'
+        )
 
         # TODO: process the on_close event
 
@@ -207,9 +207,9 @@ class RESTStreams(object):
     def __on_publish(self, req):
         code = Error.success
 
-        trace("srs %s: client id=%s, ip=%s, vhost=%s, app=%s, stream=%s, param=%s"%(
-            req["action"], req["client_id"], req["ip"], req["vhost"], req["app"], req["stream"], req["param"]
-        ))
+        trace(
+            f'srs {req["action"]}: client id={req["client_id"]}, ip={req["ip"]}, vhost={req["vhost"]}, app={req["app"]}, stream={req["stream"]}, param={req["param"]}'
+        )
 
         # TODO: process the on_publish event
 
@@ -218,9 +218,9 @@ class RESTStreams(object):
     def __on_unpublish(self, req):
         code = Error.success
 
-        trace("srs %s: client id=%s, ip=%s, vhost=%s, app=%s, stream=%s, param=%s"%(
-            req["action"], req["client_id"], req["ip"], req["vhost"], req["app"], req["stream"], req["param"]
-        ))
+        trace(
+            f'srs {req["action"]}: client id={req["client_id"]}, ip={req["ip"]}, vhost={req["vhost"]}, app={req["app"]}, stream={req["stream"]}, param={req["param"]}'
+        )
 
         # TODO: process the on_unpublish event
 
@@ -285,10 +285,9 @@ class RESTDvrs(object):
     def __on_dvr(self, req):
         code = Error.success
 
-        trace("srs %s: client id=%s, ip=%s, vhost=%s, app=%s, stream=%s, param=%s, cwd=%s, file=%s"%(
-            req["action"], req["client_id"], req["ip"], req["vhost"], req["app"], req["stream"], req["param"],
-            req["cwd"], req["file"]
-        ))
+        trace(
+            f'srs {req["action"]}: client id={req["client_id"]}, ip={req["ip"]}, vhost={req["vhost"]}, app={req["app"]}, stream={req["stream"]}, param={req["param"]}, cwd={req["cwd"]}, file={req["file"]}'
+        )
 
         # TODO: process the on_dvr event
 
@@ -408,10 +407,9 @@ class RESTHls(object):
     def __on_hls(self, req):
         code = Error.success
 
-        trace("srs %s: client id=%s, ip=%s, vhost=%s, app=%s, stream=%s, param=%s, duration=%s, cwd=%s, file=%s, seq_no=%s"%(
-            req["action"], req["client_id"], req["ip"], req["vhost"], req["app"], req["stream"], req["param"], req["duration"],
-            req["cwd"], req["file"], req["seq_no"]
-        ))
+        trace(
+            f'srs {req["action"]}: client id={req["client_id"]}, ip={req["ip"]}, vhost={req["vhost"]}, app={req["app"]}, stream={req["stream"]}, param={req["param"]}, duration={req["duration"]}, cwd={req["cwd"]}, file={req["file"]}, seq_no={req["seq_no"]}'
+        )
 
         # TODO: process the on_hls event
 
@@ -486,9 +484,9 @@ class RESTSessions(object):
     def __on_play(self, req):
         code = Error.success
 
-        trace("srs %s: client id=%s, ip=%s, vhost=%s, app=%s, stream=%s, param=%s, pageUrl=%s"%(
-            req["action"], req["client_id"], req["ip"], req["vhost"], req["app"], req["stream"], req["param"], req["pageUrl"]
-        ))
+        trace(
+            f'srs {req["action"]}: client id={req["client_id"]}, ip={req["ip"]}, vhost={req["vhost"]}, app={req["app"]}, stream={req["stream"]}, param={req["param"]}, pageUrl={req["pageUrl"]}'
+        )
 
         # TODO: process the on_play event
 
@@ -497,9 +495,9 @@ class RESTSessions(object):
     def __on_stop(self, req):
         code = Error.success
 
-        trace("srs %s: client id=%s, ip=%s, vhost=%s, app=%s, stream=%s, param=%s"%(
-            req["action"], req["client_id"], req["ip"], req["vhost"], req["app"], req["stream"], req["param"]
-        ))
+        trace(
+            f'srs {req["action"]}: client id={req["client_id"]}, ip={req["ip"]}, vhost={req["vhost"]}, app={req["app"]}, stream={req["stream"]}, param={req["param"]}'
+        )
 
         # TODO: process the on_stop event
 
@@ -524,22 +522,25 @@ class ArmServer:
     
     def dead(self):
         dead_time_seconds = 20
-        if time.time() - self.heartbeat > dead_time_seconds:
-            return True
-        return False
+        return time.time() - self.heartbeat > dead_time_seconds
     
     def json_dump(self):
-        data = {}
-        data["id"] = self.id
-        data["ip"] = self.ip
-        data["device_id"] = self.device_id
-        data["summaries"] = self.summaries
-        data["devices"] = self.devices
-        data["public_ip"] = self.public_ip
-        data["heartbeat"] = self.heartbeat
-        data["heartbeat_h"] = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(self.heartbeat))
-        data["api"] = "http://%s:1985/api/v1/summaries"%(self.ip)
-        data["console"] = "http://ossrs.net/console/ng_index.html#/summaries?host=%s&port=1985"%(self.ip)
+        data = {
+            "id": self.id,
+            "ip": self.ip,
+            "device_id": self.device_id,
+            "summaries": self.summaries,
+            "devices": self.devices,
+            "public_ip": self.public_ip,
+            "heartbeat": self.heartbeat,
+            "heartbeat_h": time.strftime(
+                "%Y-%m-%d %H:%M:%S", time.localtime(self.heartbeat)
+            ),
+        }
+        data["api"] = f"http://{self.ip}:1985/api/v1/summaries"
+        data[
+            "console"
+        ] = f"http://ossrs.net/console/ng_index.html#/summaries?host={self.ip}&port=1985"
         return data
         
 '''
@@ -556,10 +557,9 @@ class RESTServers(object):
         self.__lock = threading.Lock()
         
     def __get_node(self, device_id):
-        for node in self.__nodes:
-            if node.device_id == device_id:
-                return node
-        return None
+        return next(
+            (node for node in self.__nodes if node.device_id == device_id), None
+        )
         
     def __refresh_nodes(self):
         while len(self.__nodes) > 0:
@@ -614,17 +614,17 @@ class RESTServers(object):
     '''
     def GET(self, id=None):
         enable_crossdomain()
-        
+
         try:
             self.__lock.acquire()
-        
+
             self.__refresh_nodes()
-            
-            data = []
-            for node in self.__nodes:
-                if id == None or node.id == str(id) or node.device_id == str(id):
-                    data.append(node.json_dump())
-            
+
+            data = [
+                node.json_dump()
+                for node in self.__nodes
+                if id is None or node.id == str(id) or node.device_id == str(id)
+            ]
             return json.dumps(data)
         finally:
             self.__lock.release()
@@ -701,7 +701,7 @@ class RESTChats(object):
         
     def POST(self):
         enable_crossdomain()
-        
+
         req = cherrypy.request.body.read()
         chat = json.loads(req)
 
@@ -720,8 +720,8 @@ class RESTChats(object):
         finally:
             self.__chat_lock.release();
 
-        trace("create chat success, id=%s"%(chat["id"]))
-        
+        trace(f'create chat success, id={chat["id"]}')
+
         return json.dumps({"code":0, "data": chat["id"]})
 
     def DELETE(self, id):
@@ -735,7 +735,7 @@ class RESTChats(object):
                     continue
 
                 self.__chats.remove(chat)
-                trace("delete chat success, id=%s"%(id))
+                trace(f"delete chat success, id={id}")
 
                 return json.dumps({"code":0, "data": None})
         finally:
@@ -754,7 +754,7 @@ class RESTChats(object):
                     continue
 
                 chat["heartbeat"] = time.time();
-                trace("heartbeat chat success, id=%s"%(id))
+                trace(f"heartbeat chat success, id={id}")
 
                 return json.dumps({"code":0, "data": None})
         finally:
@@ -898,13 +898,11 @@ create process by specifies command.
 '''
 def create_process(command, stdout_fd, stderr_fd):
     # log the original command
-    msg = "process start command: %s"%(command);
+    msg = f"process start command: {command}";
 
     # to avoid shell injection, directly use the command, no need to filter.
     args = shlex.split(str(command));
-    process = subprocess.Popen(args, stdout=stdout_fd, stderr=stderr_fd);
-
-    return process;
+    return subprocess.Popen(args, stdout=stdout_fd, stderr=stderr_fd)
 '''
 isolate thread for srs worker, to do some job in background,
 for example, to snapshot thumbnail of RTMP stream.
@@ -1012,7 +1010,7 @@ class SrsWorker(cherrypy.process.plugins.SimplePlugin):
         
     # {"action":"on_unpublish","client_id":108,"ip":"127.0.0.1","vhost":"__defaultVhost__","app":"live","stream":"livestream"}
     def snapshot_destroy(self, req):
-        url = "rtmp://127.0.0.1/%s...vhost...%s/%s"%(req['app'], req['vhost'], req['stream'])
+        url = f"rtmp://127.0.0.1/{req['app']}...vhost...{req['vhost']}/{req['stream']}"
         if url in self.__snapshots:
             snapshot = self.__snapshots[url]
             snapshot['abort'] = True

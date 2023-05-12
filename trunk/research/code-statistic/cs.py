@@ -30,38 +30,39 @@ def process(f, code_file):
         line = line.strip()
         if is_block_comments:
             if "*/" in line:
-                verbose("[block][end] %s"%line)
+                verbose(f"[block][end] {line}")
                 is_block_comments = False
                 is_line_comments = False
             else:
-                verbose("[block][cont] %s"%line)
+                verbose(f"[block][cont] {line}")
             stat_block_comments += 1
             continue
         if line.startswith("/*"):
-            verbose("[block][start] %s"%line)
+            verbose(f"[block][start] {line}")
             is_block_comments = True
             is_line_comments = False
             stat_block_comments += 1
             # inline block comments
-            if is_block_comments:
-                if "*/" in line:
-                    verbose("[block][end] %s"%line)
-                    is_block_comments = False
-                    is_line_comments = False
+            if is_block_comments and "*/" in line:
+                verbose(f"[block][end] {line}")
+                is_block_comments = False
+                is_line_comments = False
             continue
         if line.startswith("//"):
-            verbose("[line] %s"%line)
+            verbose(f"[line] {line}")
             is_block_comments = False
             is_line_comments = True
             stat_line_comments += 1
             continue
-        verbose("[code] %s"%line)
+        verbose(f"[code] {line}")
         is_block_comments = False
         is_line_comments = False
         stat_code += 1
     total = stat_code + stat_block_comments + stat_line_comments
     comments = stat_block_comments + stat_line_comments
-    trace("total:%s code:%s comments:%s block:%s line:%s file:%s"%(total, stat_code, comments, stat_block_comments, stat_line_comments, code_file))
+    trace(
+        f"total:{total} code:{stat_code} comments:{comments} block:{stat_block_comments} line:{stat_line_comments} file:{code_file}"
+    )
     return (0, total, stat_code, comments, stat_block_comments, stat_line_comments, code_file)
 
 def do_stat(code_file):
